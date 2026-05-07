@@ -1,0 +1,77 @@
+.container {
+  padding: 3rem 2rem;
+  background-color: #f8fafc;
+  min-height: 100vh;
+}
+
+.header {
+  max-width: 80rem; /* Volvemos a un ancho estándar más elegante */
+  margin: 0 auto 3rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.filterBar {
+  background: white;
+  padding: 0.3rem;
+  border-radius: 0.8rem;
+  border: 1px solid #e2e8f0;
+  display: flex;
+}
+
+.filterBtn {
+  padding: 0.5rem 1.2rem;
+  border-radius: 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  transition: all 0.2s;
+  border: none;
+  cursor: pointer;
+  background: transparent;
+  color: #64748b;
+}
+
+.activeBtn {
+  background-color: #2563eb;
+  color: white;
+}
+
+.grid {
+  max-width: 80rem;
+  margin: 0 auto;
+  display: grid;
+  /* Tamaño ideal: 300px permite ver 3 o 4 productos por fila en escritorio */
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
+  gap: 2rem; 
+}
+
+.productCard {
+  background: white;
+  border-radius: 1.2rem;
+  overflow: hidden;
+  border: 1px solid #f1f5f9;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.productCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.productImage {
+  height: 220px; /* Altura equilibrada para que se vea el producto y el texto a la vez */
+  width: 100%;
+  object-fit: cover;
+}
+
+.content {
+  padding: 1.5rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}

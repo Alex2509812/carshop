@@ -1,0 +1,61 @@
+.container {
+  min-height: 100vh;
+  background-color: white;
+}
+
+.hero {
+  padding: 5rem 2rem;
+  background-color: #0f172a;
+  text-align: center;
+  color: white;
+}
+
+.gridMision {
+  max-width: 80rem;
+  margin: 5rem auto;
+  padding: 0 2rem;
+  display: grid;
+  gap: 3rem;
+}
+
+@media (min-width: 768px) {
+  .gridMision {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.card {
+  padding: 2.5rem;
+  border-radius: 40px;
+  border: 1px solid #f1f5f9;
+  transition: all 0.5s ease;
+}
+
+.misionCard {
+  background-color: #eff6ff;
+}
+
+.misionCard:hover {
+  background-color: #2563eb;
+  color: white;
+}
+
+.visionCard {
+  background-color: #f8fafc;
+}
+
+.visionCard:hover {
+  background-color: #0f172a;
+  color: white;
+}
+
+.iconBox {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2rem;
+  transition: background-color 0.3s;
+}

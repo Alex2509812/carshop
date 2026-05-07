@@ -1,0 +1,100 @@
+/* src/pages/Contacto.module.css */
+
+.container {
+  min-height: 100vh;
+  background-color: white;
+}
+
+.header {
+  padding: 5rem 2rem;
+  background-color: #0f172a; /* Slate 900 */
+  text-align: center;
+  color: white;
+}
+
+.titulo {
+  font-size: 3.75rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.05em;
+  margin-bottom: 1rem;
+}
+
+.textoAzul {
+  color: #3b82f6; /* Blue 500 */
+  font-style: italic;
+}
+
+.gridContacto {
+  display: grid;
+  max-width: 72rem;
+  margin: 5rem auto;
+  padding: 0 2rem;
+  gap: 4rem;
+}
+
+@media (min-width: 768px) {
+  .gridContacto {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.formularioCard {
+  background: white;
+  padding: 3rem;
+  border-radius: 40px;
+  box-shadow: 0 25px 50px -12px rgba(59, 130, 246, 0.15);
+  border: 1px solid #f1f5f9;
+}
+
+.inputGroup {
+  margin-bottom: 1.5rem;
+}
+
+.label {
+  display: block;
+  font-size: 10px;
+  text-transform: uppercase;
+  font-weight: 900;
+  color: #94a3b8;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.5rem;
+}
+
+.inputField {
+  width: 100%;
+  background-color: #f8fafc;
+  border: none;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  font-size: 0.875rem;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.inputField:focus {
+  box-shadow: 0 0 0 2px #3b82f6;
+}
+
+.botonEnviar {
+  width: 100%;
+  background-color: #2563eb;
+  color: white;
+  padding: 1rem;
+  border-radius: 1rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.botonEnviar:hover {
+  background-color: #0f172a;
+  transform: translateY(-2px);
+}
