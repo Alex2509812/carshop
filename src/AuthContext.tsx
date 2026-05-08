@@ -42,10 +42,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const signOut = async () => {
-    await supabase.auth.signOut();
-    setUser(null);
-    setRole(null);
-    window.location.replace('/login');
+  await supabase.auth.signOut();
+  localStorage.removeItem('carshop-cart'); // ✅ limpia el carrito
+  setUser(null);
+  setRole(null);
+  window.location.replace('/login');
   };
 
   // ✅ Siempre muestra children, loading solo afecta ProtectedRoute

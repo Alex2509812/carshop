@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { ShoppingCart, Package, Droplets, Loader2 } from 'lucide-react';
-import { useCart } from '../CartContext'; 
-// DESCOMENTA esta línea si ya creaste el archivo en src/lib/supabase.ts
+import { useCart } from '../CartContext';
+import { useAuth } from '../AuthContext';
 import { supabase } from '../supabaseClient';
+import { useNavigate } from 'react-router-dom';
 
 interface Producto {
   id: number;
@@ -18,15 +19,14 @@ export default function Catalogo() {
   const [loading, setLoading] = useState(true);
   const [filtro, setFiltro] = useState("Todos");
   const { addToCart } = useCart();
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
   const fetchProductos = async () => {
     try {
       setLoading(true);
-      // Solo intentamos fetch si supabase existe
       if (supabase) {
-        const { data, error } = await supabase
-          .from('productos')
-          .select('*');
+        const { data, error } = await supabase.from('productos').select('*');
         if (error) throw error;
         if (data) setProductos(data);
       }
@@ -41,8 +41,17 @@ export default function Catalogo() {
     fetchProductos();
   }, []);
 
-  const productosFiltrados = filtro === "Todos" 
-    ? productos 
+  // ✅ Si no hay sesión, manda al login
+  const handleAddToCart = (prod: Producto) => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+    addToCart(prod);
+  };
+
+  const productosFiltrados = filtro === "Todos"
+    ? productos
     : productos.filter(p => p.categoria === filtro);
 
   const getIcon = (cat: string) => {
@@ -65,10 +74,9 @@ export default function Catalogo() {
         <h2 className="text-3xl font-black uppercase tracking-tight text-slate-900">
           Nuestro <span className="text-blue-600">Catálogo Real</span>
         </h2>
-        
         <div className="flex gap-2 bg-slate-100 p-1 rounded-xl">
           {["Todos", "Accesorios", "Detallado"].map((cat) => (
-            <button 
+            <button
               key={cat}
               onClick={() => setFiltro(cat)}
               className={`px-6 py-2 rounded-lg font-bold text-xs uppercase transition-all ${
@@ -85,29 +93,26 @@ export default function Catalogo() {
         {productosFiltrados.map((prod) => (
           <div key={prod.id} className="bg-white rounded-3xl border border-slate-100 overflow-hidden hover:shadow-2xl hover:shadow-blue-100 transition-all group">
             <div className="relative overflow-hidden">
-               <img src={prod.imagen} alt={prod.nombre} className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500" />
-               <div className="absolute top-4 left-4 bg-blue-600 text-white text-[10px] px-3 py-1 rounded-full font-black uppercase tracking-widest">
-                  {prod.categoria}
-               </div>
+              <img src={prod.imagen} alt={prod.nombre} className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500" />
+              <div className="absolute top-4 left-4 bg-blue-600 text-white text-[10px] px-3 py-1 rounded-full font-black uppercase tracking-widest">
+                {prod.categoria}
+              </div>
             </div>
-
             <div className="p-6">
               <h3 className="text-xl font-bold mb-2 text-slate-900">{prod.nombre}</h3>
-              
               <p className="text-2xl font-black text-blue-600 mb-4">
                 ${prod.precio.toLocaleString()} <span className="text-[10px] font-normal text-gray-400 uppercase">mxn</span>
               </p>
-              
               <div className="flex items-center gap-3 text-xs text-gray-500 mb-6 bg-slate-50 p-4 rounded-2xl border border-slate-100">
                 {getIcon(prod.categoria)}
                 <span className="font-medium">{prod.detalles}</span>
               </div>
-
-              <button 
-                onClick={() => addToCart(prod)}
+              <button
+                onClick={() => handleAddToCart(prod)}
                 className="w-full bg-slate-900 text-white py-4 rounded-2xl font-bold uppercase text-xs tracking-widest hover:bg-blue-600 transition-all flex items-center justify-center gap-3 shadow-lg shadow-slate-200"
               >
-                <ShoppingCart size={18} /> Agregar al Carrito
+                <ShoppingCart size={18} />
+                {user ? 'Agregar al Carrito' : 'Iniciar sesión para comprar'}
               </button>
             </div>
           </div>
