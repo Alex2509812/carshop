@@ -21,7 +21,7 @@ export default function Contacto() {
     try {
       await emailjs.send(
         'carshop_service',
-        'f0iuhlb',
+        'template_uqsf3ej',
         {
           from_name: form.nombre,
           from_email: form.email,
