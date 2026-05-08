@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { supabase } from '../supabaseClient';
 import { useNavigate } from 'react-router-dom';
-import { UserPlus, Mail, Lock, CheckCircle2 } from 'lucide-react';
+import { UserPlus, Mail, Lock, CheckCircle2, Eye, EyeOff } from 'lucide-react';
 import styles from './Register.module.css';
 
 const Register = () => {
@@ -11,6 +11,8 @@ const Register = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const navigate = useNavigate();
 
   const handleRegister = async (e: React.FormEvent) => {
@@ -24,10 +26,7 @@ const Register = () => {
       return;
     }
 
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-    });
+    const { error } = await supabase.auth.signUp({ email, password });
 
     if (error) {
       setError(error.message);
@@ -35,8 +34,7 @@ const Register = () => {
     } else {
       setSuccess(true);
       setLoading(false);
-      // Opcional: Redirigir después de unos segundos
-      setTimeout(() => navigate('/login'), 3000);
+      setTimeout(() => navigate('/login'), 5000);
     }
   };
 
@@ -54,7 +52,7 @@ const Register = () => {
           <div className={styles.successAlert}>
             <CheckCircle2 size={40} className="mx-auto mb-2" />
             <p>¡Registro exitoso!</p>
-            <p className="font-normal mt-1 text-gray-500 italic">Revisa tu correo para confirmar tu cuenta.</p>
+            <p className="font-normal mt-1 text-gray-500 italic">Revisa tu correo para confirmar tu cuenta antes de iniciar sesión.</p>
           </div>
         ) : (
           <form onSubmit={handleRegister} className={styles.form}>
@@ -80,13 +78,20 @@ const Register = () => {
               <div className={styles.inputWrapper}>
                 <Lock className={styles.inputIcon} size={18} />
                 <input
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   required
                   className={styles.input}
                   placeholder="Mínimo 6 caracteres"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className={styles.eyeButton}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
               </div>
             </div>
 
@@ -95,13 +100,20 @@ const Register = () => {
               <div className={styles.inputWrapper}>
                 <Lock className={styles.inputIcon} size={18} />
                 <input
-                  type="password"
+                  type={showConfirm ? 'text' : 'password'}
                   required
                   className={styles.input}
                   placeholder="Repite tu contraseña"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirm(!showConfirm)}
+                  className={styles.eyeButton}
+                >
+                  {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
               </div>
             </div>
 

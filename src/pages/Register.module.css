@@ -143,3 +143,21 @@
   font-weight: 900;
   cursor: pointer;
 }
+
+.eyeButton {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #9ca3af;
+  display: flex;
+  align-items: center;
+  padding: 0;
+}
+
+.eyeButton:hover {
+  color: #4b5563;
+}
