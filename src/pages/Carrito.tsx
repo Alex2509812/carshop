@@ -32,33 +32,20 @@ export default function Carrito() {
             {cart.map((item) => (
               <div key={item.id} className="bg-white p-4 rounded-2xl border flex items-center justify-between shadow-sm gap-4">
                 <img src={item.imagen} className="w-20 h-20 object-cover rounded-xl flex-shrink-0" alt={item.nombre} />
-
                 <div className="flex-grow">
                   <h4 className="font-bold text-slate-900">{item.nombre}</h4>
                   <p className="text-blue-600 font-black">${item.precio.toLocaleString()} MXN</p>
                 </div>
-
-                {/* ✅ Controles de cantidad */}
                 <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => updateQuantity(item.id, item.cantidad - 1)}
-                    className="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center transition"
-                  >
+                  <button onClick={() => updateQuantity(item.id, item.cantidad - 1)} className="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center transition">
                     <Minus size={14} />
                   </button>
                   <span className="font-bold text-sm w-6 text-center">{item.cantidad}</span>
-                  <button
-                    onClick={() => updateQuantity(item.id, item.cantidad + 1)}
-                    className="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center transition"
-                  >
+                  <button onClick={() => updateQuantity(item.id, item.cantidad + 1)} className="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center transition">
                     <Plus size={14} />
                   </button>
                 </div>
-
-                <p className="font-black text-slate-900 w-24 text-right">
-                  ${(item.precio * item.cantidad).toLocaleString()}
-                </p>
-
+                <p className="font-black text-slate-900 w-24 text-right">${(item.precio * item.cantidad).toLocaleString()}</p>
                 <button onClick={() => removeFromCart(item.id)} className="text-red-400 hover:text-red-600 p-2">
                   <Trash2 size={20} />
                 </button>
@@ -67,23 +54,14 @@ export default function Carrito() {
           </div>
 
           <div className="bg-slate-900 rounded-3xl p-8 text-white h-fit sticky top-24 shadow-xl">
-            <p className="text-gray-400 text-xs font-bold uppercase tracking-widest mb-2">Resumen de compra</p>
+            <p className="text-gray-400 text-xs font-bold uppercase tracking-widest mb-2">Resumen</p>
             <div className="flex justify-between items-end mb-8">
               <span className="text-sm font-medium">Total:</span>
-              <span className="text-3xl font-black">
-                ${total.toLocaleString()} <span className="text-[10px] text-gray-400">MXN</span>
-              </span>
+              <span className="text-3xl font-black">${total.toLocaleString()} <span className="text-[10px] text-gray-400">MXN</span></span>
             </div>
-
-            <button
-              onClick={handleCheckout}
-              className="w-full bg-blue-600 hover:bg-blue-500 py-4 rounded-2xl font-black uppercase text-sm flex items-center justify-center gap-3 transition-all"
-            >
+            <button onClick={handleCheckout} className="w-full bg-blue-600 hover:bg-blue-500 py-4 rounded-2xl font-black uppercase text-sm flex items-center justify-center gap-3 transition-all">
               <CreditCard size={20} /> Pagar ahora
             </button>
-            <p className="text-[9px] text-center mt-6 text-gray-500 leading-relaxed uppercase">
-              Transacción segura cifrada por Mercado Pago
-            </p>
           </div>
         </div>
       </div>

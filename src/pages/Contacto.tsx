@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, Phone, Send, MessageSquare, Clock } from 'lucide-react';
+import { Mail, Phone, MessageSquare } from 'lucide-react';
 import styles from './Contacto.module.css'; // <--- IMPORTANTE
 
 export default function Contacto() {

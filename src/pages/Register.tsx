@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { supabase } from '../supabaseClient';
 import { useNavigate } from 'react-router-dom';
-import { UserPlus, Mail, Lock, User, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { UserPlus, Mail, Lock, CheckCircle2 } from 'lucide-react';
 import styles from './Register.module.css';
 
 const Register = () => {

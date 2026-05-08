@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { ShoppingCart, Package, Droplets, Loader2 } from 'lucide-react';
 import { useCart } from '../CartContext'; 
 // DESCOMENTA esta línea si ya creaste el archivo en src/lib/supabase.ts

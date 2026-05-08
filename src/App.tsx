@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
-import { Sparkles, ShoppingCart, Facebook, Instagram, Twitter, User } from 'lucide-react';
+import { Sparkles, ShoppingCart, User } from 'lucide-react';
 
 import { CartProvider, useCart } from './CartContext';
 import { AuthProvider, useAuth } from './AuthContext';

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '../supabaseClient';
 import {
   Package, Plus, Trash2, X, AlertCircle,
-  ShoppingBag, DollarSign, Layers, ImageIcon
+  ShoppingBag, DollarSign, ImageIcon
 } from 'lucide-react';
 
 interface Producto {
