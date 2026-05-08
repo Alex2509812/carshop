@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight, Zap, ShieldCheck, Star } from 'lucide-react';
+import { Zap, ShieldCheck, Star } from 'lucide-react';
 import styles from './Inicio.module.css';
 
 export default function Inicio() {
