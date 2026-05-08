@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
 interface Producto {
   id: number;
@@ -19,7 +19,16 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
-  const [cart, setCart] = useState<Producto[]>([]);
+  const [cart, setCart] = useState<Producto[]>(() => {
+  const saved = localStorage.getItem('carshop-cart');
+  return saved ? JSON.parse(saved) : [];
+});
+//parte agregada para persistencia
+    useEffect(() => {
+  localStorage.setItem('carshop-cart', JSON.stringify(cart));
+}, [cart]);
+
+
 
   const addToCart = (product: Omit<Producto, 'cantidad'>) => {
     setCart((prev) => {
