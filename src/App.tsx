@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
 import { Sparkles, ShoppingCart, User } from 'lucide-react';
 
@@ -33,8 +34,9 @@ function CartIcon() {
   );
 }
 
-function Navbar() {
+  function Navbar() {
   const { role, user, signOut } = useAuth();
+  const [menuAbierto, setMenuAbierto] = useState(false);
 
   const handleLogout = async () => {
     await signOut();
@@ -42,43 +44,84 @@ function Navbar() {
   };
 
   return (
-    <nav className="flex items-center justify-between px-8 py-4 border-b sticky top-0 bg-white/90 backdrop-blur-md z-50">
+    <nav className="flex items-center justify-between px-6 py-4 border-b sticky top-0 bg-white/90 backdrop-blur-md z-50">
       <Link to="/" className="flex items-center gap-2">
         <Sparkles className="text-blue-600 w-6 h-6" />
         <span className="font-black tracking-tighter text-xl uppercase italic">CarShop</span>
       </Link>
 
+      {/* Links desktop */}
       <div className="hidden md:flex gap-8 text-xs font-bold uppercase tracking-widest">
         <Link to="/" className="hover:text-blue-600 transition">Inicio</Link>
         <Link to="/catalogo" className="hover:text-blue-600 transition">Catálogo</Link>
         <Link to="/nosotros" className="hover:text-blue-600 transition">Nosotros</Link>
         <Link to="/contacto" className="hover:text-blue-600 transition">Contacto</Link>
-
         {role === 'admin' && (
           <Link to="/admin" className="text-red-600 font-black hover:text-red-700 transition">Admin</Link>
         )}
       </div>
 
-      <div className="flex items-center gap-5">
-        {user ? (
-          <button 
-            onClick={handleLogout}
-            className="text-[10px] font-black uppercase tracking-widest bg-slate-900 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition"
-          >
-            Salir
-          </button>
-        ) : (
-          <Link to="/login" className="hover:text-blue-600 transition">
-            <User className="w-6 h-6" />
-          </Link>
-        )}
+      <div className="flex items-center gap-4">
+        {/* Carrito siempre visible */}
         <CartIcon />
+
+        {/* Usuario desktop */}
+        <div className="hidden md:flex">
+          {user ? (
+            <button
+              onClick={handleLogout}
+              className="text-[10px] font-black uppercase tracking-widest bg-slate-900 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition"
+            >
+              Salir
+            </button>
+          ) : (
+            <Link to="/login" className="hover:text-blue-600 transition">
+              <User className="w-6 h-6" />
+            </Link>
+          )}
+        </div>
+
+        {/* Botón hamburguesa móvil */}
+        <button
+          className="md:hidden flex flex-col gap-1.5 p-1"
+          onClick={() => setMenuAbierto(!menuAbierto)}
+        >
+          <span className={`block w-6 h-0.5 bg-slate-900 transition-all ${menuAbierto ? 'rotate-45 translate-y-2' : ''}`} />
+          <span className={`block w-6 h-0.5 bg-slate-900 transition-all ${menuAbierto ? 'opacity-0' : ''}`} />
+          <span className={`block w-6 h-0.5 bg-slate-900 transition-all ${menuAbierto ? '-rotate-45 -translate-y-2' : ''}`} />
+        </button>
       </div>
+
+      {/* Menú móvil desplegable */}
+      {menuAbierto && (
+        <div className="absolute top-full left-0 right-0 bg-white border-b shadow-lg md:hidden z-50">
+          <div className="flex flex-col px-6 py-4 gap-4 text-xs font-bold uppercase tracking-widest">
+            <Link to="/" onClick={() => setMenuAbierto(false)} className="hover:text-blue-600 transition py-2 border-b border-slate-100">Inicio</Link>
+            <Link to="/catalogo" onClick={() => setMenuAbierto(false)} className="hover:text-blue-600 transition py-2 border-b border-slate-100">Catálogo</Link>
+            <Link to="/nosotros" onClick={() => setMenuAbierto(false)} className="hover:text-blue-600 transition py-2 border-b border-slate-100">Nosotros</Link>
+            <Link to="/contacto" onClick={() => setMenuAbierto(false)} className="hover:text-blue-600 transition py-2 border-b border-slate-100">Contacto</Link>
+            {role === 'admin' && (
+              <Link to="/admin" onClick={() => setMenuAbierto(false)} className="text-red-600 font-black py-2 border-b border-slate-100">Admin</Link>
+            )}
+            {user ? (
+              <button
+                onClick={() => { handleLogout(); setMenuAbierto(false); }}
+                className="text-left text-red-600 font-black py-2"
+              >
+                Cerrar sesión
+              </button>
+            ) : (
+              <Link to="/login" onClick={() => setMenuAbierto(false)} className="hover:text-blue-600 transition py-2">
+                Iniciar sesión
+              </Link>
+            )}
+          </div>
+        </div>
+      )}
     </nav>
   );
 }
-
-function AppContent() {
+  function AppContent() {
   const { role } = useAuth();
 
   return (
