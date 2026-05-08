@@ -1,14 +1,42 @@
 import React, { useState } from 'react';
-import { Mail, Phone, MessageSquare } from 'lucide-react';
-import styles from './Contacto.module.css'; // <--- IMPORTANTE
+import { Mail, Phone } from 'lucide-react';
+import emailjs from '@emailjs/browser';
+import styles from './Contacto.module.css';
 
 export default function Contacto() {
   const [enviado, setEnviado] = useState(false);
+  const [enviando, setEnviando] = useState(false);
+  const [error, setError] = useState('');
+  const [form, setForm] = useState({ nombre: '', email: '', mensaje: '' });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setEnviado(true);
-    setTimeout(() => setEnviado(false), 5000);
+    setEnviando(true);
+    setError('');
+
+    try {
+      await emailjs.send(
+        'carshop_service',
+        'f0iuhlb',
+        {
+          from_name: form.nombre,
+          from_email: form.email,
+          message: form.mensaje,
+        },
+        'mVFQNrK28-RUKheoR'
+      );
+      setEnviado(true);
+      setForm({ nombre: '', email: '', mensaje: '' });
+      setTimeout(() => setEnviado(false), 5000);
+    } catch (err) {
+      setError('Hubo un error al enviar. Intenta de nuevo.');
+    } finally {
+      setEnviando(false);
+    }
   };
 
   return (
@@ -23,7 +51,6 @@ export default function Contacto() {
       </section>
 
       <div className={styles.gridContacto}>
-        {/* Info Izquierda */}
         <div className="space-y-8">
           <h3 className="text-3xl font-black uppercase text-slate-900">Contacto Directo</h3>
           <div className="flex items-center gap-4">
@@ -36,31 +63,62 @@ export default function Contacto() {
           </div>
         </div>
 
-        {/* Formulario Derecha */}
         <div className={styles.formularioCard}>
           {enviado ? (
             <div className="text-center py-10">
-              <h3 className="text-2xl font-black text-green-600">¡ENVIADO!</h3>
+              <div className="text-5xl mb-4">✅</div>
+              <h3 className="text-2xl font-black text-green-600">¡MENSAJE ENVIADO!</h3>
+              <p className="text-gray-500 mt-2">Te responderemos pronto.</p>
             </div>
           ) : (
             <form onSubmit={handleSubmit}>
+              {error && (
+                <div className="bg-red-50 border border-red-200 text-red-600 text-sm px-4 py-3 rounded-xl mb-4">
+                  {error}
+                </div>
+              )}
               <div className={styles.inputGroup}>
                 <label className={styles.label}>Nombre Completo</label>
-                <input type="text" className={styles.inputField} placeholder="Tu nombre" required />
+                <input
+                  type="text"
+                  name="nombre"
+                  value={form.nombre}
+                  onChange={handleChange}
+                  className={styles.inputField}
+                  placeholder="Tu nombre"
+                  required
+                />
               </div>
-              
               <div className={styles.inputGroup}>
                 <label className={styles.label}>Email</label>
-                <input type="email" className={styles.inputField} placeholder="correo@ejemplo.com" required />
+                <input
+                  type="email"
+                  name="email"
+                  value={form.email}
+                  onChange={handleChange}
+                  className={styles.inputField}
+                  placeholder="correo@ejemplo.com"
+                  required
+                />
               </div>
-
               <div className={styles.inputGroup}>
                 <label className={styles.label}>Mensaje</label>
-                <textarea className={styles.inputField} rows={4} placeholder="¿En qué podemos ayudarte?" required></textarea>
+                <textarea
+                  name="mensaje"
+                  value={form.mensaje}
+                  onChange={handleChange}
+                  className={styles.inputField}
+                  rows={4}
+                  placeholder="¿En qué podemos ayudarte?"
+                  required
+                />
               </div>
-
-              <button type="submit" className={styles.botonEnviar}>
-                Enviar Mensaje <MessageSquare size={18} />
+              <button
+                type="submit"
+                disabled={enviando}
+                className={styles.botonEnviar}
+              >
+                {enviando ? 'Enviando...' : 'Enviar Mensaje'} 💬
               </button>
             </form>
           )}
