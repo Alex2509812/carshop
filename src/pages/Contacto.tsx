@@ -55,11 +55,11 @@ export default function Contacto() {
           <h3 className="text-3xl font-black uppercase text-slate-900">Contacto Directo</h3>
           <div className="flex items-center gap-4">
             <div className="bg-blue-100 p-3 rounded-xl text-blue-600"><Phone /></div>
-            <p className="text-gray-500 font-bold">+52 55 1234 5678</p>
+            <p className="text-gray-500 font-bold">722 902 9569</p>
           </div>
           <div className="flex items-center gap-4">
             <div className="bg-blue-100 p-3 rounded-xl text-blue-600"><Mail /></div>
-            <p className="text-gray-500 font-bold">soporte@carshop.com</p>
+            <p className="text-gray-500 font-bold">carshopp2@gmail.com</p>
           </div>
         </div>
 
