@@ -64,17 +64,14 @@ const AdminDashboard = () => {
     }
 
     try {
-       console.log('Intentando insertar:', nuevoProd); // ← 
-    const { data, error } = await supabase.from('productos').insert([{
-  nombre: nuevoProd.nombre.trim(),
-  precio: nuevoProd.precio,
-  categoria: nuevoProd.categoria,
-  imagen: nuevoProd.imagen.trim(),
-  detalles: nuevoProd.detalles.trim(),
-  stock: nuevoProd.stock,
-}]).select();
-
-console.log('RESULTADO:', data, 'ERROR:', error);
+      const { error } = await supabase.from('productos').insert([{
+        nombre: nuevoProd.nombre.trim(),
+        precio: nuevoProd.precio,
+        categoria: nuevoProd.categoria,
+        imagen: nuevoProd.imagen.trim(),
+        detalles: nuevoProd.detalles.trim(),
+        stock: nuevoProd.stock,
+      }]);
 
       if (error) throw error;
 
