@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { supabase } from '../supabaseClient';
 import { useNavigate } from 'react-router-dom';
 import { UserPlus, Mail, Lock, CheckCircle2, Eye, EyeOff } from 'lucide-react';
+import HCaptcha from '@hcaptcha/react-hcaptcha';
 import styles from './Register.module.css';
 
 const Register = () => {
@@ -13,6 +14,8 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const captchaRef = useRef<HCaptcha>(null);
   const navigate = useNavigate();
 
   const handleRegister = async (e: React.FormEvent) => {
@@ -26,10 +29,24 @@ const Register = () => {
       return;
     }
 
-    const { error } = await supabase.auth.signUp({ email, password });
+    if (!captchaToken) {
+      setError("Por favor completa el captcha");
+      setLoading(false);
+      return;
+    }
+
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        captchaToken,
+      },
+    });
 
     if (error) {
       setError(error.message);
+      captchaRef.current?.resetCaptcha();
+      setCaptchaToken(null);
       setLoading(false);
     } else {
       setSuccess(true);
@@ -85,11 +102,7 @@ const Register = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className={styles.eyeButton}
-                >
+                <button type="button" onClick={() => setShowPassword(!showPassword)} className={styles.eyeButton}>
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
@@ -107,17 +120,23 @@ const Register = () => {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirm(!showConfirm)}
-                  className={styles.eyeButton}
-                >
+                <button type="button" onClick={() => setShowConfirm(!showConfirm)} className={styles.eyeButton}>
                   {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
             </div>
 
-            <button type="submit" disabled={loading} className={styles.submitButton}>
+            {/* Captcha */}
+            <div className={styles.captchaWrapper}>
+              <HCaptcha
+                sitekey="3eca6aee-36fc-489a-aef8-6284d716c49e"
+                onVerify={(token) => setCaptchaToken(token)}
+                onExpire={() => setCaptchaToken(null)}
+                ref={captchaRef}
+              />
+            </div>
+
+            <button type="submit" disabled={loading || !captchaToken} className={styles.submitButton}>
               {loading ? "Procesando..." : "Registrarme"}
             </button>
           </form>

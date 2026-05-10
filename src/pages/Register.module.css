@@ -161,3 +161,8 @@
 .eyeButton:hover {
   color: #4b5563;
 }
+.captchaWrapper {
+  display: flex;
+  justify-content: center;
+  margin: 0.5rem 0;
+}
