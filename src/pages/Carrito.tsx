@@ -1,12 +1,35 @@
+import { useState } from 'react';
 import { useCart } from '../CartContext';
 import { Trash2, CreditCard, ArrowLeft, Plus, Minus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export default function Carrito() {
   const { cart, removeFromCart, updateQuantity, total } = useCart();
+  const [procesando, setProcesando] = useState(false);
 
-  const handleCheckout = () => {
-    alert('Próximamente: Conexión con Mercado Pago API');
+  const handleCheckout = async () => {
+    if (cart.length === 0) return;
+    setProcesando(true);
+
+    try {
+      const response = await fetch('/api/create-preference', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items: cart }),
+      });
+
+      const data = await response.json();
+
+      if (data.init_point) {
+        window.location.href = data.init_point;
+      } else {
+        alert('Error al procesar el pago. Intenta de nuevo.');
+      }
+    } catch (error) {
+      alert('Error de conexión. Intenta de nuevo.');
+    } finally {
+      setProcesando(false);
+    }
   };
 
   if (cart.length === 0) {
@@ -59,9 +82,17 @@ export default function Carrito() {
               <span className="text-sm font-medium">Total:</span>
               <span className="text-3xl font-black">${total.toLocaleString()} <span className="text-[10px] text-gray-400">MXN</span></span>
             </div>
-            <button onClick={handleCheckout} className="w-full bg-blue-600 hover:bg-blue-500 py-4 rounded-2xl font-black uppercase text-sm flex items-center justify-center gap-3 transition-all">
-              <CreditCard size={20} /> Pagar ahora
+            <button
+              onClick={handleCheckout}
+              disabled={procesando}
+              className="w-full bg-blue-600 hover:bg-blue-500 py-4 rounded-2xl font-black uppercase text-sm flex items-center justify-center gap-3 transition-all disabled:opacity-50"
+            >
+              <CreditCard size={20} />
+              {procesando ? 'Procesando...' : 'Pagar ahora'}
             </button>
+            <p className="text-[9px] text-center mt-4 text-gray-500 uppercase tracking-widest">
+              Pago seguro con Mercado Pago
+            </p>
           </div>
         </div>
       </div>
