@@ -168,3 +168,27 @@
   25% { transform: translateX(-5px); }
   75% { transform: translateX(5px); }
 }
+
+.eyeButton {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #9ca3af;
+  display: flex;
+  align-items: center;
+  padding: 0;
+}
+
+.eyeButton:hover {
+  color: #4b5563;
+}
+
+.captchaWrapper {
+  display: flex;
+  justify-content: center;
+  margin: 0.5rem 0;
+}

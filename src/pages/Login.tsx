@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { supabase } from '../supabaseClient';
-import { useNavigate, Link } from 'react-router-dom'; // Importamos Link
-import { LogIn, Mail, Lock, AlertCircle, ArrowRight, UserPlus } from 'lucide-react';
+import { useNavigate, Link } from 'react-router-dom';
+import { LogIn, Mail, Lock, AlertCircle, ArrowRight, UserPlus, Eye, EyeOff } from 'lucide-react';
+import HCaptcha from '@hcaptcha/react-hcaptcha';
 import styles from './Login.module.css';
 
 const Login = () => {
@@ -9,6 +10,9 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const captchaRef = useRef<HCaptcha>(null);
   const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -16,10 +20,22 @@ const Login = () => {
     setLoading(true);
     setError(null);
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (!captchaToken) {
+      setError("Por favor completa el captcha");
+      setLoading(false);
+      return;
+    }
+
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+      options: { captchaToken },
+    });
 
     if (error) {
       setError("Credenciales incorrectas");
+      captchaRef.current?.resetCaptcha();
+      setCaptchaToken(null);
       setLoading(false);
     } else {
       navigate('/');
@@ -29,7 +45,6 @@ const Login = () => {
   return (
     <div className={styles.container}>
       <div className={styles.card}>
-        
         <div className={styles.header}>
           <div className={styles.iconWrapper}>
             <LogIn size={32} />
@@ -66,19 +81,36 @@ const Login = () => {
             <div className={styles.inputWrapper}>
               <Lock className={styles.inputIcon} size={20} />
               <input
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 required
                 className={styles.input}
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className={styles.eyeButton}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
             </div>
+          </div>
+
+          {/* Captcha */}
+          <div className={styles.captchaWrapper}>
+            <HCaptcha
+              sitekey="3eca6aee-36fc-489a-aef8-6284d716c49e"
+              onVerify={(token) => setCaptchaToken(token)}
+              onExpire={() => setCaptchaToken(null)}
+              ref={captchaRef}
+            />
           </div>
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || !captchaToken}
             className={styles.submitButton}
           >
             {loading ? "Verificando..." : (
@@ -90,13 +122,12 @@ const Login = () => {
           </button>
         </form>
 
-        {/* --- NUEVO BOTÓN DE REGISTRO --- */}
         <div className="mt-8 pt-6 border-t border-gray-100 flex flex-col items-center gap-3">
           <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">
             ¿Eres nuevo cliente?
           </p>
-          <Link 
-            to="/register" 
+          <Link
+            to="/register"
             className="flex items-center gap-2 text-xs font-bold text-blue-600 hover:text-blue-800 transition-colors uppercase tracking-tighter"
           >
             <UserPlus size={16} />
