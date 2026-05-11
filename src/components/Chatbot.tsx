@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect } from 'react';
-import { GoogleGenerativeAI } from '@google/generative-ai';
 import { MessageCircle, X, Send, Bot, RotateCcw } from 'lucide-react';
 import { supabase } from '../supabaseClient';
 
@@ -16,8 +15,6 @@ interface Producto {
   stock: number;
 }
 
-const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
-
 const mensajeBienvenida: Mensaje = {
   rol: 'bot',
   texto: '¡Hola! Soy el asistente virtual de CarShop 🚗✨ Estoy aquí para ayudarte con recomendaciones de productos, información sobre detallado automotriz y más. ¿En qué puedo ayudarte hoy?'
@@ -31,9 +28,7 @@ export default function Chatbot() {
   const [productos, setProductos] = useState<Producto[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    cargarProductos();
-  }, []);
+  useEffect(() => { cargarProductos(); }, []);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -93,22 +88,25 @@ Pregunta del cliente: ${pregunta}`;
     setMensajes(prev => [...prev, { rol: 'user', texto: userMsg }]);
     setCargando(true);
 
-    // Detectar despedida
     const despedidas = ['adios', 'adiós', 'bye', 'hasta luego', 'chao', 'chau', 'nos vemos'];
     const esDespedida = despedidas.some(d => userMsg.toLowerCase().includes(d));
 
     try {
-      const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
-      const result = await model.generateContent(construirPrompt(userMsg));
-      const response = result.response.text();
+      // ✅ Llama a la función serverless en lugar de Gemini directamente
+      const response = await fetch('/api/gemini', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: construirPrompt(userMsg) }),
+      });
 
-      setMensajes(prev => [...prev, { rol: 'bot', texto: response }]);
+      const data = await response.json();
 
-      // Si se despidió, reinicia el chat después de 3 segundos
+      if (!response.ok) throw new Error(data.error || 'Error del servidor');
+
+      setMensajes(prev => [...prev, { rol: 'bot', texto: data.response }]);
+
       if (esDespedida) {
-        setTimeout(() => {
-          setMensajes([mensajeBienvenida]);
-        }, 3000);
+        setTimeout(() => setMensajes([mensajeBienvenida]), 3000);
       }
     } catch (error) {
       setMensajes(prev => [...prev, { rol: 'bot', texto: 'Lo siento, hubo un error. Intenta de nuevo en un momento.' }]);
@@ -126,7 +124,6 @@ Pregunta del cliente: ${pregunta}`;
 
   return (
     <>
-      {/* Botón flotante */}
       <button
         onClick={() => setAbierto(!abierto)}
         style={{
@@ -144,7 +141,6 @@ Pregunta del cliente: ${pregunta}`;
         {abierto ? <X size={24} /> : <MessageCircle size={24} />}
       </button>
 
-      {/* Ventana del chat */}
       {abierto && (
         <div style={{
           position: 'fixed', bottom: 90, right: 24, zIndex: 999,
@@ -153,7 +149,6 @@ Pregunta del cliente: ${pregunta}`;
           display: 'flex', flexDirection: 'column', overflow: 'hidden',
           border: '1px solid #e2e8f0',
         }}>
-          {/* Header */}
           <div style={{ background: 'linear-gradient(135deg, #4a6cf7, #2563eb)', padding: '14px 16px', display: 'flex', alignItems: 'center', gap: 10 }}>
             <div style={{ background: 'rgba(255,255,255,0.2)', borderRadius: '50%', width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Bot size={20} color="white" />
@@ -162,7 +157,6 @@ Pregunta del cliente: ${pregunta}`;
               <p style={{ margin: 0, fontWeight: 700, color: 'white', fontSize: 14 }}>Asistente CarShop</p>
               <p style={{ margin: 0, fontSize: 11, color: 'rgba(255,255,255,0.7)' }}>Con IA • En línea</p>
             </div>
-            {/* Botón reiniciar */}
             <button
               onClick={reiniciarChat}
               title="Reiniciar conversación"
@@ -172,7 +166,6 @@ Pregunta del cliente: ${pregunta}`;
             </button>
           </div>
 
-          {/* Mensajes */}
           <div style={{ flex: 1, overflowY: 'auto', padding: '14px', display: 'flex', flexDirection: 'column', gap: 10 }}>
             {mensajes.map((msg, i) => (
               <div key={i} style={{ display: 'flex', justifyContent: msg.rol === 'user' ? 'flex-end' : 'flex-start' }}>
@@ -197,7 +190,6 @@ Pregunta del cliente: ${pregunta}`;
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Input */}
           <div style={{ padding: '12px', borderTop: '1px solid #e2e8f0', display: 'flex', gap: 8 }}>
             <input
               type="text"
