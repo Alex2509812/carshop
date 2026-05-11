@@ -98,7 +98,7 @@ Pregunta del cliente: ${pregunta}`;
     const esDespedida = despedidas.some(d => userMsg.toLowerCase().includes(d));
 
     try {
-      const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+      const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
       const result = await model.generateContent(construirPrompt(userMsg));
       const response = result.response.text();
 
