@@ -4,6 +4,7 @@ import { Sparkles, ShoppingCart, User } from 'lucide-react';
 
 import { CartProvider, useCart } from './CartContext';
 import { AuthProvider, useAuth } from './AuthContext';
+import Chatbot from './components/Chatbot';
 
 import Inicio from './pages/Inicio';
 import Catalogo from './pages/Catalogo';
@@ -154,6 +155,7 @@ function CartIcon() {
           <span className="text-white font-bold tracking-tighter uppercase text-sm">CARSHOP © 2026</span>
         </div>
       </footer>
+      <Chatbot />
     </div>
   );
 }
