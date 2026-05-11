@@ -7,8 +7,12 @@ export default async function handler(req, res) {
 
   try {
     const { prompt } = req.body;
+
+    // Limitar el tamaño del prompt a 4000 caracteres
+    const promptLimitado = prompt.length > 4000 ? prompt.substring(0, 4000) : prompt;
+
     const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
-    const result = await model.generateContent(prompt);
+    const result = await model.generateContent(promptLimitado);
     res.status(200).json({ response: result.response.text() });
   } catch (error) {
     console.error('Gemini error:', error);
