@@ -10,7 +10,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { items } = req.body;
+    const { items, userId } = req.body;
 
     const preference = new Preference(client);
     const response = await preference.create({
@@ -27,6 +27,7 @@ export default async function handler(req, res) {
           pending: `${process.env.VITE_APP_URL}/carrito?status=pending`,
         },
         auto_return: 'approved',
+        external_reference: userId || null,
       },
     });
 
