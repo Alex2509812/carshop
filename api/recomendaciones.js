@@ -110,7 +110,7 @@ export default async function handler(req, res) {
             recomendaciones = idsRecomendados
               .map((id) => productosMap.get(id))
               .filter(Boolean)
-              .slice(0, 6);
+              .slice(0, 3);
           }
         }
       }
@@ -141,7 +141,7 @@ export default async function handler(req, res) {
     }
 
     // Limitar a 6 y serializar
-    const respuesta = recomendaciones.slice(0, 6).map(toResponse);
+    const respuesta = recomendaciones.slice(0, 3).map(toResponse);
 
     return res.status(200).json({ recomendaciones: respuesta, fallback });
   } catch (error) {
